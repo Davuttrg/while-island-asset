@@ -1,0 +1,1071 @@
+# BUCKET - User
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-user-bucket
+spec:
+  title: User
+  description: Users
+  icon: view_stream
+  primary: username
+  readOnly: false
+  history: false
+  properties:
+    username:
+      type: string
+      title: username
+      description: Description of the username input
+      options:
+        position: left
+    email:
+      type: string
+      title: email
+      description: Description of the email input
+      options:
+        position: left
+    wallet:
+      type: string
+      title: wallet
+      description: Description of the wallet input
+      options:
+        position: left
+    ship:
+      type: relation
+      title: ship
+      description: Description of the ship input
+      options:
+        position: right
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-ship-bucket
+    merchants:
+      type: relation
+      title: merchants
+      description: Description of the merchants input
+      options:
+        position: right
+      relationType: onetomany
+      dependent: false
+      primary: title
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-city-bucket
+    news_subscriber:
+      type: boolean
+      title: news_subscriber
+      description: Description of the news_subscriber input
+      options:
+        position: right
+      default: false
+  acl:
+    write: true==true
+    read: true==true
+  order: 3
+---
+# BUCKET - Country
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-country-bucket
+spec:
+  title: Country
+  description: Countries
+  icon: view_stream
+  primary: title
+  readOnly: false
+  history: false
+  properties:
+    title:
+      type: string
+      title: title
+      description: Title of the row
+      options:
+        position: left
+    description:
+      type: textarea
+      title: description
+      description: Description of the row
+      options:
+        position: right
+  acl:
+    write: true==true
+    read: true==true
+  order: 4
+---
+# BUCKET - City
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-city-bucket
+spec:
+  title: City
+  description: Cities
+  icon: view_stream
+  primary: title
+  readOnly: false
+  history: false
+  properties:
+    title:
+      type: string
+      title: title
+      description: Title of the row
+      options:
+        position: left
+    country:
+      type: relation
+      title: country
+      description: Description of the country input
+      options:
+        position: left
+      relationType: onetoone
+      dependent: false
+      primary: title
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
+    population:
+      type: number
+      title: population
+      description: Description of the population input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+  acl:
+    write: true==true
+    read: true==true
+  order: 5
+---
+# BUCKET - Product
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-product-bucket
+spec:
+  title: Product
+  description: Describe your new bucket
+  icon: view_stream
+  primary: title
+  readOnly: false
+  history: false
+  properties:
+    title:
+      type: string
+      title: title
+      description: Title of the row
+      options:
+        position: left
+    description:
+      type: textarea
+      title: description
+      description: Description of the description input
+      options:
+        position: left
+    base_price:
+      type: number
+      title: base_price
+      description: Description of the base_price input
+      options:
+        position: bottom
+      minimum: 0
+      default: 0
+  acl:
+    write: true==true
+    read: true==true
+  order: 6
+---
+# BUCKET - City System
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-city-system-bucket
+spec:
+  title: City System
+  description: Describe your new bucket
+  icon: view_stream
+  primary: count
+  readOnly: false
+  history: false
+  properties:
+    city:
+      type: relation
+      title: city
+      description: Description of the city input
+      options:
+        position: left
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-city-bucket
+    product:
+      type: relation
+      title: product
+      description: Description of the product input
+      options:
+        position: left
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-product-bucket
+    count:
+      type: number
+      title: count
+      description: Description of the count input
+      options:
+        position: left
+      minimum: 0
+      default: 0
+    consumption_rate:
+      type: number
+      title: consumption_rate
+      description: Description of the consumption_rate input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    production_rate:
+      type: number
+      title: production_rate
+      description: Description of the production_rate input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    purchase_price:
+      type: number
+      title: purchase_price
+      description: Description of the purchase_price input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    sale_price:
+      type: number
+      title: sale_price
+      description: Description of the sale_price input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    storage:
+      type: number
+      title: storage
+      description: Description of the storage input
+      options:
+        position: bottom
+      minimum: 0
+      default: 0
+  acl:
+    write: true==true
+    read: true==true
+  order: 7
+---
+# BUCKET - User Product
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-user-product-bucket
+spec:
+  title: User Product
+  description: User Products
+  icon: view_stream
+  primary: amount
+  readOnly: false
+  history: false
+  properties:
+    user:
+      type: relation
+      title: user
+      description: Description of the user input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-user-bucket
+    product:
+      type: relation
+      title: product
+      description: Description of the product input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-product-bucket
+    amount:
+      type: number
+      title: amount
+      description: Description of the amount input
+      options:
+        position: bottom
+      minimum: 0
+      default: 0
+    updated_at:
+      type: date
+      title: updated_at
+      description: Description of the updated_at input
+      options:
+        position: bottom
+      default: :updated_at
+  acl:
+    write: true==true
+    read: true==true
+  order: 8
+---
+# BUCKET - Wars
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-wars-bucket
+spec:
+  title: Wars
+  description: Country Wars
+  icon: view_stream
+  primary: title
+  readOnly: false
+  history: false
+  properties:
+    title:
+      type: string
+      title: title
+      description: Title of the row
+      options:
+        position: left
+    description:
+      type: textarea
+      title: description
+      description: Description of the row
+      options:
+        position: left
+    in_war:
+      type: boolean
+      title: in_war
+      description: Description of the in_war input
+      options:
+        position: left
+      default: true
+    left_sides:
+      type: relation
+      title: left_sides
+      description: Description of the left_sides input
+      options:
+        position: right
+      relationType: onetomany
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
+    left_side_production_reduction_rate:
+      type: number
+      title: left_side_production_reduction_rate
+      description: Description of the left_side_production_reduction_rate input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    right_sides:
+      type: relation
+      title: right_sides
+      description: Description of the right_sides input
+      options:
+        position: right
+      relationType: onetomany
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
+    right_side_production_reduction_rate:
+      type: number
+      title: right_side_production_reduction_rate
+      description: Description of the right_side_production_reduction_rate input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+  acl:
+    write: true==true
+    read: true==true
+  order: 9
+---
+# BUCKET - Agreements
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-agreements-bucket
+spec:
+  title: Agreements
+  description: Agreements
+  icon: view_stream
+  primary: title
+  readOnly: false
+  history: false
+  properties:
+    title:
+      type: string
+      title: title
+      description: Title of the row
+      options:
+        position: left
+    description:
+      type: textarea
+      title: description
+      description: Description of the row
+      options:
+        position: left
+    product:
+      type: relation
+      title: product
+      description: Description of the product input
+      options:
+        position: right
+      relationType: onetoone
+      dependent: false
+      primary: title
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-product-bucket
+    contracted_country:
+      type: relation
+      title: contracted_country
+      description: Description of the contracted_country input
+      options:
+        position: right
+      relationType: onetoone
+      dependent: false
+      primary: title
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
+    contracting_country:
+      type: relation
+      title: contracting_country
+      description: Description of the contracting_country input
+      options:
+        position: right
+      relationType: onetoone
+      dependent: false
+      primary: title
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
+    agreement_rating:
+      type: number
+      title: agreement_rating
+      description: Description of the agreement_rating input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    in_agreement:
+      type: boolean
+      title: in_agreement
+      description: Description of the in_agreement input
+      options:
+        position: bottom
+      default: true
+  acl:
+    write: true==true
+    read: true==true
+  order: 10
+---
+# BUCKET - Embargos
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-embargos-bucket
+spec:
+  title: Embargos
+  description: Embargos
+  icon: view_stream
+  primary: title
+  readOnly: false
+  history: false
+  properties:
+    title:
+      type: string
+      title: title
+      description: Title of the row
+      options:
+        position: left
+    description:
+      type: textarea
+      title: description
+      description: Description of the row
+      options:
+        position: left
+    embargoed_country:
+      type: relation
+      title: embargoed_country
+      description: Description of the embargoed_country input
+      options:
+        position: right
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
+    embargoing_country:
+      type: relation
+      title: embargoing_country
+      description: Description of the embargoing_country input
+      options:
+        position: right
+      relationType: onetoone
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
+    products:
+      type: relation
+      title: products
+      description: Description of the products input
+      options:
+        position: left
+      relationType: onetomany
+      dependent: false
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-product-bucket
+    deleted_product_rate:
+      type: number
+      title: deleted_product_rate
+      description: Description of the deleted_product_rate input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    consumption_rate_decrease:
+      type: number
+      title: consumption_rate_decrease
+      description: Description of the consumption_rate_decrease input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    in_embargo:
+      type: boolean
+      title: in_embargo
+      description: Description of the in_embargo input
+      options:
+        position: bottom
+      default: true
+  acl:
+    write: true==true
+    read: true==true
+  order: 11
+---
+# BUCKET - Ship
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-ship-bucket
+spec:
+  title: Ship
+  description: Ships
+  icon: view_stream
+  primary: title
+  readOnly: false
+  history: false
+  properties:
+    title:
+      type: string
+      title: title
+      description: Title of the row
+      options:
+        position: left
+    description:
+      type: textarea
+      title: description
+      description: Description of the row
+      options:
+        position: left
+    storage:
+      type: number
+      title: storage
+      description: Description of the storage input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+    speed:
+      type: number
+      title: speed
+      description: Description of the speed input
+      options:
+        position: right
+      minimum: 0
+      default: 0
+  acl:
+    write: true==true
+    read: true==true
+  order: 12
+---
+# BUCKET - News
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-news-bucket
+spec:
+  title: News
+  description: News About Everything
+  icon: view_stream
+  primary: title
+  readOnly: false
+  history: false
+  properties:
+    title:
+      type: string
+      title: title
+      description: Title of the row
+      options:
+        position: left
+    description:
+      type: textarea
+      title: description
+      description: Description of the row
+      options:
+        position: left
+    subject:
+      type: string
+      title: subject
+      description: Description of the subject input
+      options:
+        position: right
+      enum:
+        - topic
+        - war
+        - embargo
+        - agreement
+      default: topic
+    for_subscribers:
+      type: boolean
+      title: for_subscribers
+      description: Description of the for_subscribers input
+      options:
+        position: right
+      default: false
+  acl:
+    write: true==true
+    read: true==true
+  order: 13
+---
+# BUCKET - Requested Allocation
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-requested-allocation-bucket
+spec:
+  title: Requested Allocation
+  description: Describe your new bucket
+  icon: view_stream
+  primary: email
+  readOnly: false
+  history: false
+  properties:
+    email:
+      type: string
+      title: email
+      description: Description of the email input
+      options:
+        position: bottom
+    req_allocation:
+      type: string
+      title: req_allocation
+      description: Description of the req_allocation input
+      options:
+        position: bottom
+    created_at:
+      type: date
+      title: created_at
+      description: Description of the created_at input
+      options:
+        position: bottom
+      default: :created_at
+  acl:
+    write: true==true
+    read: true==true
+  order: 14
+---
+# FUNCTION - 🎮  Dashboard Cards
+apiVersion: function/v1
+kind: Function
+metadata:
+  name: while-island-asset-🎮--dashboard-cards-function
+spec:
+  description: City Hooks
+  language: javascript
+  timeout: 9.7
+  environment:
+    - name: CITY_BUCKET_ID
+      value: 61c4937a279e8b002d11cc29
+    - name: COUNTRY_BUCKET_ID
+      value: 61c48f70279e8b002d11cc13
+    - name: PRODUCT_BUCKET_ID
+      value: 61c57da9279e8b002d11cc4f
+    - name: CITY_SYSTEM_BUCKET_ID
+      value: 61c58981279e8b002d11ccf9
+    - name: NO_DEVKIT_DATABASE_WARNING
+      value: "true"
+    - name: WAR_BUCKET_ID
+      value: 61c58ba9279e8b002d11cd55
+    - name: AGREEMENT_BUCKET_ID
+      value: 61c58cfc279e8b002d11cd6c
+    - name: EMBARGO_BUCKET_ID
+      value: 61c5918f279e8b002d11cda1
+    - name: NEWS_BUCKET_ID
+      value: 61c59042279e8b002d11cd90
+    - name: USER_PRODUCT_BUCKET_ID
+      value: 61d3f9d0280c06002c81c6c7
+    - name: USER_BUCKET_ID
+      value: 61c592b9279e8b002d11cdb8
+  dependency:
+    - name: "@spica-devkit/database"
+      version: ^0.9.14
+  title: 🎮  Dashboard Cards
+  code: ./function/while-island-asset-🎮--dashboard-cards-function.js
+  runtime:
+    name: Node
+    language: Javascript
+---
+# FUNCTION - 🎮  Schedules
+apiVersion: function/v1
+kind: Function
+metadata:
+  name: while-island-asset-🎮--schedules-function
+spec:
+  language: javascript
+  timeout: 12
+  description: Schedules
+  environment:
+    - name: CITY_SYSTEM_BUCKET_ID
+      value: 61c58981279e8b002d11ccf9
+    - name: CITY_BUCKET_ID
+      value: 61c4937a279e8b002d11cc29
+    - name: WAR_BUCKET_ID
+      value: 61c58ba9279e8b002d11cd55
+    - name: AGREEMENT_BUCKET_ID
+      value: 61c58cfc279e8b002d11cd6c
+    - name: EMBARGO_BUCKET_ID
+      value: 61c5918f279e8b002d11cda1
+    - name: NO_DEVKIT_DATABASE_WARNING
+      value: "true"
+    - name: PRODUCT_BUCKET_ID
+      value: 61c57da9279e8b002d11cc4f
+  dependency:
+    - name: "@spica-devkit/database"
+      version: ^0.9.14
+  title: 🎮  Schedules
+  code: ./function/while-island-asset-🎮--schedules-function.js
+  runtime:
+    name: Node
+    language: Javascript
+---
+# FUNCTION - 🎮  Update Triggers
+apiVersion: function/v1
+kind: Function
+metadata:
+  name: while-island-asset-🎮--update-triggers-function
+spec:
+  language: javascript
+  timeout: 12
+  description: Update Trgiggers
+  environment:
+    - name: NEWS_BUCKET_ID
+      value: 61c59042279e8b002d11cd90
+    - name: COUNTRY_BUCKET_ID
+      value: 61c48f70279e8b002d11cc13
+    - name: NO_DEVKIT_DATABASE_WARNING
+      value: "true"
+    - name: PRODUCT_BUCKET_ID
+      value: 61c57da9279e8b002d11cc4f
+    - name: USER_PRODUCT_BUCKET_ID
+      value: 61d3f9d0280c06002c81c6c7
+  dependency:
+    - name: "@spica-devkit/database"
+      version: ^0.9.14
+  title: 🎮  Update Triggers
+  code: ./function/while-island-asset-🎮--update-triggers-function.js
+  runtime:
+    name: Node
+    language: Javascript
+---
+# TRIGGER - addCityDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: addCityDashboard
+spec:
+  type: http
+  active: true
+  name: addCityDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Get
+    path: /addCityDashboard
+---
+# TRIGGER - createCityFromDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: createCityFromDashboard
+spec:
+  type: http
+  active: true
+  name: createCityFromDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Post
+    path: /createCityFromDashboard
+---
+# TRIGGER - addProductDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: addProductDashboard
+spec:
+  type: http
+  active: true
+  name: addProductDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Get
+    path: /addProductDashboard
+---
+# TRIGGER - createProductFromDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: createProductFromDashboard
+spec:
+  type: http
+  active: true
+  name: createProductFromDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Post
+    path: /createProductFromDashboard
+---
+# TRIGGER - createWarDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: createWarDashboard
+spec:
+  type: http
+  active: true
+  name: createWarDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Get
+    path: /createWarDashboard
+---
+# TRIGGER - createWarFromDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: createWarFromDashboard
+spec:
+  type: http
+  active: true
+  name: createWarFromDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Post
+    path: /createWarFromDashboard
+---
+# TRIGGER - createAgreementDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: createAgreementDashboard
+spec:
+  type: http
+  active: true
+  name: createAgreementDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Get
+    path: /createAgreementDashboard
+---
+# TRIGGER - createAgreementFromDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: createAgreementFromDashboard
+spec:
+  type: http
+  active: true
+  name: createAgreementFromDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Post
+    path: /createAgreementFromDashboard
+---
+# TRIGGER - createEmbargoDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: createEmbargoDashboard
+spec:
+  type: http
+  active: true
+  name: createEmbargoDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Get
+    path: /createEmbargoDashboard
+---
+# TRIGGER - createEmbargoFromDashboard
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: createEmbargoFromDashboard
+spec:
+  type: http
+  active: true
+  name: createEmbargoFromDashboard
+  func: while-island-asset-🎮--dashboard-cards-function
+  httpOptions:
+    method: Post
+    path: /createEmbargoFromDashboard
+---
+# TRIGGER - default
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: default
+spec:
+  type: schedule
+  active: true
+  name: default
+  func: while-island-asset-🎮--schedules-function
+  scheduleOptions:
+    timezone: Europe/Istanbul
+    frequency: 0 * * * *
+---
+# TRIGGER - checkWar
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: checkWar
+spec:
+  type: schedule
+  active: true
+  name: checkWar
+  func: while-island-asset-🎮--schedules-function
+  scheduleOptions:
+    timezone: Europe/Istanbul
+    frequency: 0 * * * *
+---
+# TRIGGER - checkAgreement
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: checkAgreement
+spec:
+  type: schedule
+  active: true
+  name: checkAgreement
+  func: while-island-asset-🎮--schedules-function
+  scheduleOptions:
+    timezone: Europe/Istanbul
+    frequency: 0 * * * *
+---
+# TRIGGER - checkEmbargo
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: checkEmbargo
+spec:
+  type: schedule
+  active: true
+  name: checkEmbargo
+  func: while-island-asset-🎮--schedules-function
+  scheduleOptions:
+    timezone: Europe/Istanbul
+    frequency: 0 * * * *
+---
+# TRIGGER - tradeEvent
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: tradeEvent
+spec:
+  type: http
+  active: true
+  name: tradeEvent
+  func: while-island-asset-🎮--schedules-function
+  httpOptions:
+    method: Post
+    path: /tradeEvent
+---
+# TRIGGER - warUpdate
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: warUpdate
+spec:
+  type: bucket
+  active: true
+  name: warUpdate
+  func: while-island-asset-🎮--update-triggers-function
+  bucketOptions:
+    bucket:
+      resourceFieldRef:
+        schemaName: while-island-asset-wars-bucket
+    type: UPDATE
+---
+# TRIGGER - agreementUpdate
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: agreementUpdate
+spec:
+  type: bucket
+  active: true
+  name: agreementUpdate
+  func: while-island-asset-🎮--update-triggers-function
+  bucketOptions:
+    bucket:
+      resourceFieldRef:
+        schemaName: while-island-asset-agreements-bucket
+    type: UPDATE
+---
+# TRIGGER - embargoUpdate
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: embargoUpdate
+spec:
+  type: bucket
+  active: true
+  name: embargoUpdate
+  func: while-island-asset-🎮--update-triggers-function
+  bucketOptions:
+    bucket:
+      resourceFieldRef:
+        schemaName: while-island-asset-embargos-bucket
+    type: UPDATE
+---
+# TRIGGER - userInsert
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: userInsert
+spec:
+  type: database
+  active: true
+  name: userInsert
+  func: while-island-asset-🎮--update-triggers-function
+  databaseOptions:
+    collection:
+      resourceFieldRef:
+        schemaName: while-island-asset-user-bucket
+    type: INSERT
