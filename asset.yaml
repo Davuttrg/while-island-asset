@@ -704,27 +704,47 @@ spec:
   timeout: 9.7
   environment:
     - name: CITY_BUCKET_ID
-      value: 61c4937a279e8b002d11cc29
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-city-bucket
     - name: COUNTRY_BUCKET_ID
-      value: 61c48f70279e8b002d11cc13
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
     - name: PRODUCT_BUCKET_ID
-      value: 61c57da9279e8b002d11cc4f
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-product-bucket
     - name: CITY_SYSTEM_BUCKET_ID
-      value: 61c58981279e8b002d11ccf9
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-city-system-bucket
     - name: NO_DEVKIT_DATABASE_WARNING
-      value: "true"
+      value: "TRUE"
     - name: WAR_BUCKET_ID
-      value: 61c58ba9279e8b002d11cd55
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-wars-bucket
     - name: AGREEMENT_BUCKET_ID
-      value: 61c58cfc279e8b002d11cd6c
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-agreements-bucket
     - name: EMBARGO_BUCKET_ID
-      value: 61c5918f279e8b002d11cda1
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-embargos-bucket
     - name: NEWS_BUCKET_ID
-      value: 61c59042279e8b002d11cd90
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-news-bucket
     - name: USER_PRODUCT_BUCKET_ID
-      value: 61d3f9d0280c06002c81c6c7
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-user-product-bucket
     - name: USER_BUCKET_ID
-      value: 61c592b9279e8b002d11cdb8
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-user-bucket
   dependency:
     - name: "@spica-devkit/database"
       version: ^0.9.14
@@ -745,19 +765,31 @@ spec:
   description: Schedules
   environment:
     - name: CITY_SYSTEM_BUCKET_ID
-      value: 61c58981279e8b002d11ccf9
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-city-system-bucket
     - name: CITY_BUCKET_ID
-      value: 61c4937a279e8b002d11cc29
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-city-bucket
     - name: WAR_BUCKET_ID
-      value: 61c58ba9279e8b002d11cd55
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-wars-bucket
     - name: AGREEMENT_BUCKET_ID
-      value: 61c58cfc279e8b002d11cd6c
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-agreements-bucket
     - name: EMBARGO_BUCKET_ID
-      value: 61c5918f279e8b002d11cda1
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-embargos-bucket
     - name: NO_DEVKIT_DATABASE_WARNING
-      value: "true"
+      value: "TRUE"
     - name: PRODUCT_BUCKET_ID
-      value: 61c57da9279e8b002d11cc4f
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-product-bucket
   dependency:
     - name: "@spica-devkit/database"
       version: ^0.9.14
@@ -778,15 +810,23 @@ spec:
   description: Update Trgiggers
   environment:
     - name: NEWS_BUCKET_ID
-      value: 61c59042279e8b002d11cd90
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-news-bucket
     - name: COUNTRY_BUCKET_ID
-      value: 61c48f70279e8b002d11cc13
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-country-bucket
     - name: NO_DEVKIT_DATABASE_WARNING
-      value: "true"
+      value: "TRUE"
     - name: PRODUCT_BUCKET_ID
-      value: 61c57da9279e8b002d11cc4f
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-product-bucket
     - name: USER_PRODUCT_BUCKET_ID
-      value: 61d3f9d0280c06002c81c6c7
+      valueFrom:
+        resourceFieldRef:
+          schemaName: while-island-asset-user-product-bucket
   dependency:
     - name: "@spica-devkit/database"
       version: ^0.9.14
