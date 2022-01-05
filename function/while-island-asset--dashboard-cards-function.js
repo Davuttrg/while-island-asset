@@ -100,7 +100,7 @@ export async function addCityDashboard() {
                     type: "string",
                     enum: countries.map((item) => item.title + '*' + item._id),
                 },
-                value: countries[0].title + '*' + countries[0]._id,
+                value: "",
                 title: "Country",
                 maxItems: 1
             },
@@ -133,27 +133,36 @@ export async function createCityFromDashboard(req, res) {
         country: clearString(req.body['country']),
         population: checkNumber(req.body['population']),
     });
-
+    if (!products || products.length == 0) return {}
     let { title, country, population, ...newBody } = req.body
 
     const citySystems = [];
     let obj = {};
     newBody = clearReqBody(newBody);
-    console.log("products :", products)
-    newBody.count.forEach((_, i) => {
+    if (typeof newBody.count == "object")
+        newBody.count.forEach((_, i) => {
+            Object.keys(newBody).forEach((field) => {
+                obj[field] = checkNumber(newBody[field][i]);
+            })
+            obj['city'] = newCity.insertedId.toString();
+            const product = products.find((product) => product._id.toString() == obj["product"]);
+            let { sale_price, purchase_price } = getChangedPrices(obj["count"], obj["storage"], product.base_price);
+            obj["sale_price"] = checkDigits(sale_price);
+            obj["purchase_price"] = checkDigits(purchase_price)
+            citySystems.push(obj);
+            obj = {};
+        })
+    else {
         Object.keys(newBody).forEach((field) => {
-            obj[field] = checkNumber(newBody[field][i]);
+            obj[field] = checkNumber(newBody[field]);
         })
         obj['city'] = newCity.insertedId.toString();
         const product = products.find((product) => product._id.toString() == obj["product"]);
-        console.log("product ", product)
         let { sale_price, purchase_price } = getChangedPrices(obj["count"], obj["storage"], product.base_price);
-        console.log("sale_price, purchase_price :", sale_price, purchase_price)
         obj["sale_price"] = checkDigits(sale_price);
         obj["purchase_price"] = checkDigits(purchase_price)
         citySystems.push(obj);
-        obj = {};
-    })
+    }
     await city_system_collection.insertMany(citySystems);
     return {}
 }
@@ -253,19 +262,32 @@ export async function createProductFromDashboard(req, res) {
     });
     let { title, description, base_price, ...newBody } = req.body
     newBody = clearReqBody(newBody);
+    if (!pnewBody) return {}
     const citySystems = [];
     let obj = {};
-    newBody.count.forEach((_, i) => {
+
+    if (typeof newBody.count == "object")
+        newBody.count.forEach((_, i) => {
+            Object.keys(newBody).forEach((field) => {
+                obj[field] = checkNumber(newBody[field][i]);
+            })
+            obj['product'] = newProduct.insertedId.toString();
+            let { sale_price, purchase_price } = getChangedPrices(obj["count"], obj["storage"], req.body.base_price);
+            obj["sale_price"] = checkDigits(sale_price);
+            obj["purchase_price"] = checkDigits(purchase_price)
+            citySystems.push(obj);
+            obj = {};
+        })
+    else {
         Object.keys(newBody).forEach((field) => {
-            obj[field] = checkNumber(newBody[field][i]);
+            obj[field] = checkNumber(newBody[field]);
         })
         obj['product'] = newProduct.insertedId.toString();
         let { sale_price, purchase_price } = getChangedPrices(obj["count"], obj["storage"], req.body.base_price);
         obj["sale_price"] = checkDigits(sale_price);
         obj["purchase_price"] = checkDigits(purchase_price)
         citySystems.push(obj);
-        obj = {};
-    })
+    }
     await city_system_collection.insertMany(citySystems);
     const users = await user_collection.find().toArray();
     await user_product_collection.insertMany(users.map((item => {
@@ -304,7 +326,7 @@ export async function createWarDashboard() {
                     type: "string",
                     enum: countries.map((item) => item.title + '*' + item._id),
                 },
-                value: countries[0].title + '*' + countries[0]._id,
+                value: "",
                 title: "Left Sides",
             },
             {
@@ -321,7 +343,7 @@ export async function createWarDashboard() {
                     type: "string",
                     enum: countries.map((item) => item.title + '*' + item._id),
                 },
-                value: countries[0].title + '*' + countries[0]._id,
+                value: "",
                 title: "Right Sides",
             },
             {
@@ -364,7 +386,7 @@ export async function createAgreementDashboard() {
     let country_collection = db.collection(`bucket_${COUNTRY_BUCKET}`);
     let product_collection = db.collection(`bucket_${PRODUCT_BUCKET}`)
     let countries = await country_collection.find().toArray();
-    let products = await product_collection.find().toArray()
+    let products = await product_collection.find().toArray();
     return {
         title: "Create Agreement",
         description:
@@ -390,7 +412,7 @@ export async function createAgreementDashboard() {
                     type: "string",
                     enum: products.map((item) => item.title + '*' + item._id),
                 },
-                value: products[0].title + '*' + products[0]._id,
+                value: "",
                 title: "Product",
                 maxItems: 1
             },
@@ -401,7 +423,7 @@ export async function createAgreementDashboard() {
                     type: "string",
                     enum: countries.map((item) => item.title + '*' + item._id),
                 },
-                value: countries[0].title + '*' + countries[0]._id,
+                value: "",
                 title: "Contracted Country",
                 maxItems: 1
             },
@@ -412,7 +434,7 @@ export async function createAgreementDashboard() {
                     type: "string",
                     enum: countries.map((item) => item.title + '*' + item._id),
                 },
-                value: countries[0].title + '*' + countries[0]._id,
+                value: "",
                 title: "Contracting Country",
                 maxItems: 1
             },
@@ -480,7 +502,7 @@ export async function createEmbargoDashboard() {
                     type: "string",
                     enum: products.map((item) => item.title + '*' + item._id),
                 },
-                value: products[0].title + '*' + products[0]._id,
+                value: "",
                 title: "Products",
             },
             {
@@ -490,7 +512,7 @@ export async function createEmbargoDashboard() {
                     type: "string",
                     enum: countries.map((item) => item.title + '*' + item._id),
                 },
-                value: countries[0].title + '*' + countries[0]._id,
+                value: "",
                 title: "Embargoed Country",
                 maxItems: 1
             },
@@ -501,7 +523,7 @@ export async function createEmbargoDashboard() {
                     type: "string",
                     enum: countries.map((item) => item.title + '*' + item._id),
                 },
-                value: countries[0].title + '*' + countries[0]._id,
+                value: "",
                 title: "Embargoing Country",
                 maxItems: 1
             },
@@ -551,7 +573,7 @@ async function addNews(data) {
     await news_collection.insertOne(data)
 }
 function getChangedPrices(count, storage, base_price) {
-    const sale_price = Number(base_price) *( Math.pow(2, (1 - Math.log2(Number(count) / Number(storage)))) - 1)
+    const sale_price = Number(base_price) * (Math.pow(2, (1 - Math.log2(Number(count) / Number(storage)))) - 1)
     return {
         sale_price: sale_price > 0 ? sale_price : 0,
         purchase_price: sale_price - (sale_price * 0.03) > 0 ? sale_price - (sale_price * 0.03) : 0
