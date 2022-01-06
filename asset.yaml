@@ -1181,6 +1181,22 @@ spec:
         schemaName: while-island-asset-agreements-bucket
     type: UPDATE
 ---
+# TRIGGER - userInsert
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: userInsert
+spec:
+  type: database
+  active: true
+  name: userInsert
+  func: while-island-asset-update-triggers-function
+  databaseOptions:
+    collection:
+      resourceFieldRef:
+        schemaName: while-island-asset-user-bucket
+    type: INSERT
+---
 # TRIGGER - embargoUpdate
 apiVersion: function/v1
 kind: Trigger
