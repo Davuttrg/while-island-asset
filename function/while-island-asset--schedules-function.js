@@ -5,6 +5,11 @@ const WAR_BUCKET = process.env.WAR_BUCKET_ID;
 const AGREEMENT_BUCKET = process.env.AGREEMENT_BUCKET_ID;
 const EMBARGO_BUCKET = process.env.EMBARGO_BUCKET_ID;
 const PRODUCT_BUCKET = process.env.PRODUCT_BUCKET_ID;
+const USER_BUCKET = process.env.USER_BUCKET_ID;
+const ORDER_BUCKET = process.env.ORDER_BUCKET_ID;
+
+
+
 
 
 let db;
@@ -28,17 +33,7 @@ export default async function () {
         const city = cities.find((city) => city._id.toString() == item.city);
         const product = products.find((product) => product._id.toString() == item.product);
         item.count += (city.population * item.production_rate) - (city.population * item.consumption_rate);
-        const { sale_price, purchase_price } = getChangedPrices(item.count, item.storage, product.base_price);
-        promises.push(city_system_collection.updateOne(
-            { _id: ObjectId(item._id) },
-            {
-                $set: {
-                    "count": item.count > 0 ? item.count > item.storage ? item.storage : checkDigits(item.count) : 0,
-                    "sale_price": checkDigits(sale_price),
-                    "purchase_price": checkDigits(purchase_price)
-                }
-            }
-        ).catch((e) => console.log("default function error :", e)))
+        promises.push(updateCitySystemPrices(item.count, item.storage, product.base_price))
     })
     await Promise.all(promises).then((res) => console.log("default function res :", res))
     return {}
@@ -67,10 +62,10 @@ export async function checkWar() {
             promises.push(city_system_collection.updateOne(
                 { _id: ObjectId(data._id) },
                 { $set: { "production_rate": data.production_rate > 0 ? checkDigits(data.production_rate) : 0 } }
-            ))
+            ).catch((e) => console.log("checkWar function error :", e)))
         })
     }
-    await Promise.all(promises).then((res) => console.log("checkWar function res :", res)).catch((e) => console.log("checkWar function error :", e))
+    await Promise.all(promises).then((res) => console.log("checkWar function res :", res));
     return {}
 }
 export async function checkAgreement() {
@@ -90,7 +85,7 @@ export async function checkAgreement() {
             promises.push(city_system_collection.updateOne(
                 { _id: ObjectId(data._id) },
                 { $set: { "production_rate": data.production_rate > 0 ? checkDigits(data.production_rate) : 0 } }
-            ))
+            ).catch((e) => console.log("checkAgreement function error :", e)))
         });
         contractingCitiesData.forEach((data) => {
             data.production_rate += data.production_rate * agreement.agreement_rating;
@@ -100,7 +95,7 @@ export async function checkAgreement() {
             ))
         })
     }
-    await Promise.all(promises).then((res) => console.log("checkAgreement function res :", res)).catch((e) => console.log("checkAgreement function error :", e))
+    await Promise.all(promises).then((res) => console.log("checkAgreement function res :", res))
     return {}
 }
 export async function checkEmbargo() {
@@ -122,24 +117,81 @@ export async function checkEmbargo() {
                 {
                     $set: {
                         "consumption_rate": item.consumption_rate > 0 ? checkDigits(item.consumption_rate) : 0,
-                        "count": item.count > 0 ? checkDigits(item.count) : 0
+                        "count": item.count > 0 ? Math.floor(checkDigits(item.count)) : 0
                     }
                 }
-            ))
+            ).catch((e) => console.log("checkEmbargo function error :", e)))
         })
     }
     await Promise.all(promises).then((res) => console.log("checkEmbargo function es :", res)).catch((e) => console.log("checkEmbargo function error :", e))
     return {}
 }
 
-function getChangedPrices(count, storage, base_price) {
-    const sale_price = Number(base_price) *( Math.pow(2, (1 - Math.log2(Number(count) / Number(storage)))) - 1)
+function getChangedPrices(count, storage, base_price, amount) {
+    let sale_price;
+
+    if (amount) {
+        {
+            sale_price = Number(amount) * Number(base_price) *
+                (Math.pow(2, (1 - ((Math.log2(Number(count) / Number(storage)) + Math.log2((Number(count) - Number(amount)) / Number(storage))) / 2))) - 1)
+        }
+    } else
+        sale_price = Number(base_price) * (Math.pow(2, (1 - Math.log2(Number(count) / Number(storage)))) - 1)
     return {
-        sale_price: sale_price > 0 ? sale_price : 0,
-        purchase_price: sale_price - (sale_price * 0.03) > 0 ? sale_price - (sale_price * 0.03) : 0
+        sale_price: sale_price > 0 ? checkDigits(sale_price) : 0,
+        purchase_price: sale_price - (sale_price * 0.03) > 0 ? checkDigits(sale_price - (sale_price * 0.03)) : 0
     }
 }
-export async function tradeEvent(req, res) {
-    const { user, product, count, type } = req.body;
 
+
+export async function orderEvent(req, res) {
+    const { orderType, owner, id, amount, createTime, product, cityId } = req.body;
+    if (!db) db = await database()
+    const product_collection = db.collection(`bucket_${PRODUCT_BUCKET}`);
+    const order_collection = db.collection(`bucket_${ORDER_BUCKET}`);
+    const user_collection = db.collection(`bucket_${USER_BUCKET}`);
+    const city_system_collection = db.collection(`bucket_${CITY_SYSTEM_BUCKET}`);
+
+    const productData = await product_collection.findOne(ObjectId(product)).catch((e) => console.log("err :", e));
+    const userData = await user_collection.findOne({ wallet: owner }).catch((e) => console.log("err :", e));
+    const citySystemData = await city_system_collection.findOne({ product: product, city: cityId })
+    const orderObj = {
+        id: id,
+        order_type: orderType,
+        user: userData._id.toString(),
+        product: productData._id.toString(),
+        amount: amount,
+        created_at: new Date(createTime),
+        city: cityId
+    }
+    switch (Number(orderType)) {
+        case 0: //sale
+            orderObj['price'] = checkDigits(citySystemData.purchase_price * amount);
+            break;
+        case 1: //buy
+            const { sale_price } = getChangedPrices(citySystemData.count, citySystemData.storage, citySystemData.sale_price, amount);
+            orderObj['price'] = sale_price;
+            break;
+    };
+    const newCount = Number(orderType) == 0 ? citySystemData.count - Number(amount) : citySystemData.count + Number(amount);
+    await updateCitySystemPrices(citySystemData._id.toString(), newCount, citySystemData.storage, productData.base_price);
+    await order_collection.insertOne(orderObj).catch((e) => console.log("default function error :", e));
+    return res.status(200).send({ message: "Okay" })
+
+}
+
+async function updateCitySystemPrices(id, count, storage, base_price) {
+    if (!db) db = await database()
+    const city_system_collection = db.collection(`bucket_${CITY_SYSTEM_BUCKET}`);
+    const { sale_price, purchase_price } = getChangedPrices(count, storage, base_price);
+    return city_system_collection.updateOne(
+        { _id: ObjectId(id) },
+        {
+            $set: {
+                "count": count > 0 ? count > storage ? storage : Math.floor(checkDigits(count)) : 0,
+                "sale_price": sale_price,
+                "purchase_price": purchase_price
+            }
+        }
+    ).catch((e) => console.log("default function error :", e));
 }
