@@ -37,6 +37,7 @@ spec:
         position: right
       relationType: onetoone
       dependent: false
+      primary: title
       bucket:
         resourceFieldRef:
           schemaName: while-island-asset-ship-bucket
@@ -59,6 +60,13 @@ spec:
       options:
         position: right
       default: false
+    balance:
+      type: number
+      title: balance
+      description: Description of the balance input
+      options:
+        position: bottom
+      default: 0
   acl:
     write: true==true
     read: true==true
@@ -561,6 +569,93 @@ spec:
     read: true==true
   order: 11
 ---
+# BUCKET - Order
+apiVersion: bucket/v1
+kind: Schema
+metadata:
+  name: while-island-asset-order-bucket
+spec:
+  title: Order
+  description: Orders
+  icon: view_stream
+  primary: id
+  readOnly: false
+  history: false
+  properties:
+    id:
+      type: string
+      title: id
+      description: Description of the id input
+      options:
+        position: bottom
+    order_type:
+      type: number
+      title: order_type
+      description: Description of the order_type input
+      options:
+        position: bottom
+    user:
+      type: relation
+      title: user
+      description: Description of the user input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      primary: username
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-user-bucket
+    product:
+      type: relation
+      title: product
+      description: Description of the product input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      primary: title
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-product-bucket
+    city:
+      type: relation
+      title: city
+      description: Description of the city input
+      options:
+        position: bottom
+      relationType: onetoone
+      dependent: false
+      primary: dna_id
+      bucket:
+        resourceFieldRef:
+          schemaName: while-island-asset-city-bucket
+    amount:
+      type: number
+      title: amount
+      description: Description of the amount input
+      options:
+        position: bottom
+      minimum: 0
+      default: 0
+    price:
+      type: number
+      title: price
+      description: Description of the price input
+      options:
+        position: bottom
+    created_at:
+      type: date
+      title: created_at
+      description: Description of the created_at input
+      options:
+        position: bottom
+      default: :created_at
+  acl:
+    write: true==true
+    read: true==true
+  order: 12
+---
 # BUCKET - Ship
 apiVersion: bucket/v1
 kind: Schema
@@ -605,7 +700,7 @@ spec:
   acl:
     write: true==true
     read: true==true
-  order: 12
+  order: 13
 ---
 # BUCKET - News
 apiVersion: bucket/v1
@@ -654,7 +749,7 @@ spec:
   acl:
     write: true==true
     read: true==true
-  order: 13
+  order: 14
 ---
 # BUCKET - Requested Allocation
 apiVersion: bucket/v1
@@ -691,147 +786,111 @@ spec:
   acl:
     write: true==true
     read: true==true
-  order: 14
+  order: 15
 ---
-# FUNCTION -  Dashboard Cards
+# FUNCTION - Dashboard Cards
 apiVersion: function/v1
 kind: Function
 metadata:
-  name: while-island-asset--dashboard-cards-function
+  name: while-island-asset-dashboard-cards-function
 spec:
   description: City Hooks
   language: javascript
   timeout: 9.7
   environment:
     - name: CITY_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-city-bucket
+      value: 61c4937a279e8b002d11cc29
     - name: COUNTRY_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-country-bucket
+      value: 61c48f70279e8b002d11cc13
     - name: PRODUCT_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-product-bucket
+      value: 61c57da9279e8b002d11cc4f
     - name: CITY_SYSTEM_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-city-system-bucket
+      value: 61c58981279e8b002d11ccf9
     - name: NO_DEVKIT_DATABASE_WARNING
-      value: "TRUE"
+      value: "true"
     - name: WAR_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-wars-bucket
+      value: 61c58ba9279e8b002d11cd55
     - name: AGREEMENT_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-agreements-bucket
+      value: 61c58cfc279e8b002d11cd6c
     - name: EMBARGO_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-embargos-bucket
+      value: 61c5918f279e8b002d11cda1
     - name: NEWS_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-news-bucket
+      value: 61c59042279e8b002d11cd90
     - name: USER_PRODUCT_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-user-product-bucket
+      value: 61d3f9d0280c06002c81c6c7
     - name: USER_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-user-bucket
+      value: 61c592b9279e8b002d11cdb8
   dependency:
     - name: "@spica-devkit/database"
       version: ^0.9.14
-  title:  Dashboard Cards
-  code: ./function/while-island-asset--dashboard-cards-function.js
+  title: Dashboard Cards
+  code: ./function/while-island-asset-dashboard-cards-function.js
   runtime:
     name: Node
     language: Javascript
 ---
-# FUNCTION -   Schedules
+# FUNCTION - Schedules
 apiVersion: function/v1
 kind: Function
 metadata:
-  name: while-island-asset--schedules-function
+  name: while-island-asset-schedules-function
 spec:
   language: javascript
   timeout: 12
   description: Schedules
   environment:
     - name: CITY_SYSTEM_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-city-system-bucket
+      value: 61c58981279e8b002d11ccf9
     - name: CITY_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-city-bucket
+      value: 61c4937a279e8b002d11cc29
     - name: WAR_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-wars-bucket
+      value: 61c58ba9279e8b002d11cd55
     - name: AGREEMENT_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-agreements-bucket
+      value: 61c58cfc279e8b002d11cd6c
     - name: EMBARGO_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-embargos-bucket
+      value: 61c5918f279e8b002d11cda1
     - name: NO_DEVKIT_DATABASE_WARNING
       value: "TRUE"
     - name: PRODUCT_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-product-bucket
+      value: 61c57da9279e8b002d11cc4f
+    - name: USER_BUCKET_ID
+      value: 61c592b9279e8b002d11cdb8
+    - name: ORDER_BUCKET_ID
+      value: 61d5bdfa280c06002c81d1bb
   dependency:
     - name: "@spica-devkit/database"
       version: ^0.9.14
-  title:  Schedules
-  code: ./function/while-island-asset--schedules-function.js
+  title: Schedules
+  code: ./function/while-island-asset-schedules-function.js
   runtime:
     name: Node
     language: Javascript
 ---
-# FUNCTION -  Update Triggers
+# FUNCTION - Update Triggers
 apiVersion: function/v1
 kind: Function
 metadata:
-  name: while-island-asset--update-triggers-function
+  name: while-island-asset-update-triggers-function
 spec:
   language: javascript
   timeout: 12
   description: Update Trgiggers
   environment:
     - name: NEWS_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-news-bucket
+      value: 61c59042279e8b002d11cd90
     - name: COUNTRY_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-country-bucket
+      value: 61c48f70279e8b002d11cc13
     - name: NO_DEVKIT_DATABASE_WARNING
-      value: "TRUE"
+      value: "true"
     - name: PRODUCT_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-product-bucket
+      value: 61c57da9279e8b002d11cc4f
     - name: USER_PRODUCT_BUCKET_ID
-      valueFrom:
-        resourceFieldRef:
-          schemaName: while-island-asset-user-product-bucket
+      value: 61d3f9d0280c06002c81c6c7
   dependency:
     - name: "@spica-devkit/database"
       version: ^0.9.14
-  title:  Update Triggers
-  code: ./function/while-island-asset--update-triggers-function.js
+  title: Update Triggers
+  code: ./function/while-island-asset-update-triggers-function.js
   runtime:
     name: Node
     language: Javascript
@@ -845,7 +904,7 @@ spec:
   type: http
   active: true
   name: addCityDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Get
     path: /addCityDashboard
@@ -859,7 +918,7 @@ spec:
   type: http
   active: true
   name: createCityFromDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Post
     path: /createCityFromDashboard
@@ -873,7 +932,7 @@ spec:
   type: http
   active: true
   name: addProductDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Get
     path: /addProductDashboard
@@ -887,7 +946,7 @@ spec:
   type: http
   active: true
   name: createProductFromDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Post
     path: /createProductFromDashboard
@@ -901,7 +960,7 @@ spec:
   type: http
   active: true
   name: createWarDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Get
     path: /createWarDashboard
@@ -915,7 +974,7 @@ spec:
   type: http
   active: true
   name: createWarFromDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Post
     path: /createWarFromDashboard
@@ -929,7 +988,7 @@ spec:
   type: http
   active: true
   name: createAgreementDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Get
     path: /createAgreementDashboard
@@ -943,7 +1002,7 @@ spec:
   type: http
   active: true
   name: createAgreementFromDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Post
     path: /createAgreementFromDashboard
@@ -957,7 +1016,7 @@ spec:
   type: http
   active: true
   name: createEmbargoDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Get
     path: /createEmbargoDashboard
@@ -971,7 +1030,7 @@ spec:
   type: http
   active: true
   name: createEmbargoFromDashboard
-  func: while-island-asset--dashboard-cards-function
+  func: while-island-asset-dashboard-cards-function
   httpOptions:
     method: Post
     path: /createEmbargoFromDashboard
@@ -985,7 +1044,7 @@ spec:
   type: schedule
   active: true
   name: default
-  func: while-island-asset--schedules-function
+  func: while-island-asset-schedules-function
   scheduleOptions:
     timezone: Europe/Istanbul
     frequency: 0 * * * *
@@ -999,7 +1058,7 @@ spec:
   type: schedule
   active: true
   name: checkWar
-  func: while-island-asset--schedules-function
+  func: while-island-asset-schedules-function
   scheduleOptions:
     timezone: Europe/Istanbul
     frequency: 0 * * * *
@@ -1013,7 +1072,7 @@ spec:
   type: schedule
   active: true
   name: checkAgreement
-  func: while-island-asset--schedules-function
+  func: while-island-asset-schedules-function
   scheduleOptions:
     timezone: Europe/Istanbul
     frequency: 0 * * * *
@@ -1027,24 +1086,24 @@ spec:
   type: schedule
   active: true
   name: checkEmbargo
-  func: while-island-asset--schedules-function
+  func: while-island-asset-schedules-function
   scheduleOptions:
     timezone: Europe/Istanbul
     frequency: 0 * * * *
 ---
-# TRIGGER - tradeEvent
+# TRIGGER - orderEvent
 apiVersion: function/v1
 kind: Trigger
 metadata:
-  name: tradeEvent
+  name: orderEvent
 spec:
   type: http
   active: true
-  name: tradeEvent
-  func: while-island-asset--schedules-function
+  name: orderEvent
+  func: while-island-asset-schedules-function
   httpOptions:
     method: Post
-    path: /tradeEvent
+    path: /orderEvent
 ---
 # TRIGGER - warUpdate
 apiVersion: function/v1
@@ -1055,7 +1114,7 @@ spec:
   type: bucket
   active: true
   name: warUpdate
-  func: while-island-asset--update-triggers-function
+  func: while-island-asset-update-triggers-function
   bucketOptions:
     bucket:
       resourceFieldRef:
@@ -1071,7 +1130,7 @@ spec:
   type: bucket
   active: true
   name: agreementUpdate
-  func: while-island-asset--update-triggers-function
+  func: while-island-asset-update-triggers-function
   bucketOptions:
     bucket:
       resourceFieldRef:
@@ -1087,9 +1146,25 @@ spec:
   type: bucket
   active: true
   name: embargoUpdate
-  func: while-island-asset--update-triggers-function
+  func: while-island-asset-update-triggers-function
   bucketOptions:
     bucket:
       resourceFieldRef:
         schemaName: while-island-asset-embargos-bucket
     type: UPDATE
+---
+# TRIGGER - userInsert
+apiVersion: function/v1
+kind: Trigger
+metadata:
+  name: userInsert
+spec:
+  type: database
+  active: true
+  name: userInsert
+  func: while-island-asset-update-triggers-function
+  databaseOptions:
+    collection:
+      resourceFieldRef:
+        schemaName: while-island-asset-user-bucket
+    type: INSERT
