@@ -262,7 +262,8 @@ export async function createProductFromDashboard(req, res) {
         }
     }
     await city_system_collection.insertMany(citySystems);
-    await user_product_collection.insertMany(userProducts);
+    if (userProducts.length > 0)
+        await user_product_collection.insertMany(userProducts);
     return { message: "Ok" }
 }
 
